@@ -128,13 +128,13 @@
     
     <section name="HAWQ-Architecture" first="10">
         <module course="ha" lab="none" >01-HAWQ_Architecture.ppt</module>
-        <module course="ha" labdocs="getting-started">02-Getting_Started.ppt</module>
-        <module course="ha" labdocs="creating-tables">04-Working_with_Databases_Schemas_Tables.ppt</module>
-        <module course="ha" labdocs="data-load">06-Loading_data.ppt</module>
-        <module course="ha" labdocs="pivotal-extension-framework">07-PXF.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-getting-started" labdocs="getting-started">02-Getting_Started.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-creating-tables" labdocs="creating-tables">04-Working_with_Databases_Schemas_Tables.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-loading-data" labdocs="data-load">06-Loading_data.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-pxf" labdocs="pivotal-extension-framework">07-PXF.ppt</module>
         <module course="ha" lab="none">08-Query_Processing.ppt</module>
-        <module course="ha" labdocs="distributing-data">09-Distributing_Data.ppt</module>
-        <module course="ha" labdocs="partitioning">10-Table_Partitioning.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-distributing-data" labdocs="distributing-data">09-Distributing_Data.ppt</module>
+        <module course="ha" renameLabOnCopy="hawq-partitioning" labdocs="partitioning">10-Table_Partitioning.ppt</module>
         <module course="ha" labdocs="explain-analyze">11-Analyzing_Query_Plans.ppt</module>
         
     </section>

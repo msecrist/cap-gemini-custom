@@ -32,6 +32,13 @@
     <!-- Simply import and use main build file -->
     <import file="${course.build.dir}/build.xml"/>
     
+    <!-- =============================================================================
+         Everything added below represent customizations to the standard build process
+         as defined in the above build.xml from the common-build project
+         =============================================================================-->
+    
+    <!-- ===============  Updates from Paul ============= -->
+    
     <!-- Location of labs fr each course -->
     <property name="lab.base.dir" value="${project.root.dir}/lab"/>
     <property name="bd.base.dir"  value="${big.data.path}/lab/parentProject"/>
@@ -89,6 +96,8 @@
         
         <property name="pom.updated" value="true"/>
     </target>
+    
+    
     
     <!--
       // Each course has its own group ids, versions and rewards setup.  Need to
@@ -149,4 +158,65 @@
                 includeProjects="ws,ws-solution,rest-ws,rest-ws-solution"/>
                  -->
     </target>
+    
+    <!-- 
+        ===============  Updates from Mark =============
+    -->
+    <target name="install-labs-to-target" depends="setup-custom-labs, check-for-labs, -setup-lab-dirs-in-target, -do-package-labs"/>
+    
+    <!-- Defining a local version of this file destination as we're putting it in a non-standard location -->
+    <property name="local-labs.zip"
+        value="${target.student.files}/${artifact.id}-labfiles.zip"/>
+    
+    <!-- 
+      We want to perform a couple of pre-processing tasks. Primarily, it's to organize the files
+      into the desired structure, which is: <ArtifactId>/labs. Also, this project has no need of the 
+      repository directory (as that's a Maven thing) so remove it.
+      -->
+    <target name="before-zip-labs" if="${has.labs}">
+        
+        <!-- We don't need the repo directory -->
+        <delete dir="${lab.package.repo}"/>
+        
+        <!-- Rename the labs directory accordingly -->
+        <move todir="${zip.build.dir}/labs">
+            <fileset dir="${lab.package.dir}"/>
+        </move>      
+        
+        <!-- Chmod the scripts so they can execute. However, it's unclear that this helps in that when using
+           the standard zip task, it appears the settings aren't preserved. -->
+        <chmod dir="${zip.build.dir}/labs" perm="ugo+rx" 
+            includes="**/*.sh"/>
+    </target>
+    
+    <!-- Package up the labs into a zip file. This is a fairly customized one as the ONLY way to ensure 
+         that the zip process preserves the desired permissions is to use this variant. This requires overriding
+         the -zip-labs target from the common-build. -->
+    <target name="-zip-labs" if="${has.labs}">
+        <echo message="Executing local custom zip command to ${local-labs.zip}"></echo>
+        <zip destfile="${local-labs.zip}" >
+            <!-- The basic sematics of these two zifileset definitions is that we first include anything with a '.sh' 
+             suffix and ensure the filepermissions are 755 and then add anything else that doesn't have a '.sh' 
+             suffix with permissions 644.      
+        -->
+            <zipfileset dir="${target.dir}/work/${zip.parent.dir}" includes="**/*.sh" filemode="755" prefix="${zip.parent.dir}"/>  
+            <zipfileset dir="${target.dir}/work/${zip.parent.dir}" excludes="**/*.sh" filemode="644" prefix="${zip.parent.dir}"/>  
+        </zip>
+        
+    </target>
+    
+    <!-- Post-processing task, after the zip file has been created.  -->
+    <target name="after-zip-labs" if="${has.labs}">
+        <!-- Modify directory structure -->
+        <echo>Deleting ${manual.installation.dir}. It's not needed for this course.</echo>
+        <delete dir="${manual.installation.dir}" />
+    </target>    
+    
+    <!-- Override the default instructions because there's no need to do anything further, except
+         upload the entire directory to FilesAnywhere.
+    -->
+    <target name="-copy-labs-zip" if="${has.labs}">
+        <!-- Clean up the work dir -->
+        <delete dir="${working.dir}"/>
+    </target>    
 </project>
