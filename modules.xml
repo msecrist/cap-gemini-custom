@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+
+<!--
+  // Course modules file.  Specifies what presentations and labs are used and
+  // in what order.  Tries to be clever matching presentation names to the
+  // correspondng lab projects and cbook XML lab instruction files to reduce 
+  // the amount of XML you have to write.
+  //
+  // This file is used to:
+  //   1. Automatically generates the lab.xml required to build the lab-notes
+  //      using Docbook
+  //   2. Modifies the <modules> element in the master POM and
+  //   3. Generate the workingsets.properties used by STS.
+  //   4. Generate numbered presentation slides with a common-prefix
+  //
+  // For full details see: http://tinyurl.com/nvvpgff
+  //   https://github.com/S2EDU/Miscellaneous-
+  //                -Training-tasks/blob/master/empty-course/MODULES-README.md
+  //
+  // Each unit in the course is a module.  So is a chapter in the lab-documentation and
+  // so is a shared lab such as rewards-common.
+  //
+  // All <module> elements MUST be in a <section>. The section name is used only as
+  // documentation. Each section defines presentation numbering starting from the
+  // value in first attribute:  <section name="mvc" first=01"/>
+  //
+  // Typical modules are
+  //    A shared-project for other labs
+  //        <module lab="rewards-common"/>
+  //    A documentation chapter, no lab or presentation 
+  //        <module labdocs="reference-domain"/>
+  //    Just a presentation, no lab
+  //        <module lab="no">sw-introduction.odp</module>
+  //    Lab name and presentation name are different.  Docbook file must match one or
+  //    the other (see relaxed matching criteria below)
+  //        <module lab="rewards-online">sw-development-environment.odp</module>
+  //    Typical case.  Lab and Docbook names derived from presentation name
+  //        <module>sw-mvc-getting-started.odp</module>
+  //     Explicit case - everything defined
+  //        <module lab="web-security-1" labdocs="Web_Security"sw-security.odp</module>
+  //
+  // There is no need to put the XML suffix in the labdocs attribute.
+  //
+  // Matching is done by normalising the presentation name (and any explicit lab or
+  // labdocs attributes) to a short-form. The short form is derived as follows:
+  //   1. Take a file name, drop the file type suffix
+  //   2. Force to lower-case
+  //   3. Drop any course prefix (if using - the examples use sw-)
+  //   4. Drop any numbering prefix like 05-some-topic
+  //   5. Drop the prefix "Lab"
+  //   6. Replace underscores by hyphens
+  //
+  // NOTE:This algorithm does not (yet) convert camel case to hyphenated form - such as
+  // Lab_RewardsOnline to rewards-online.
+  //
+  // The lab-projects and Docbook files on disk are discovered and their names also
+  // normalized.  A match is then attempted.
+  //
+  // Under this scheme the following will all match:
+  //    sw-getting-started.odp
+  //    Lab_Getting_Started.xml
+  //    Getting_Started.xml
+  //    getting-started-lab
+  //    getting-started-start
+  //    getting-started-solution
+  //
+  // The lab and ladocs attributes may take other values, and modules supports other
+  // attributes:
+  //
+  //   <module presentation="no|optional" labdocs="no|false|file-name"
+  //           lab="no|false|optional|file-name" optional="yes|true" day="n"
+  //           ignore="true|yes" working-set="pattern">presentation-file-name</module>
+  //
+  -->
+  
+<!--
+  // Root element attributes:
+  //   title         - Course title used by lab instructions.
+  //   prefix        - Added to all slides.
+  //   ignore-prefix - Prefix or prefixes to ignore in file and directory names
+  //                   when normalizing to the short form.
+  //                   Sprecify multiple prefixes as a comma-separated list.
+  -->
+<modules title="Cap Gemini Custom" prefix="cgc" ignore-prefix="cs,sw">
+
+    <!--
+      // OPTIONAL:
+      //  Specify units from another course. Multiple <Course> elements are supported
+      //
+      //  Attributes:
+      //   name       - name of course (keep it short)
+      //   location   - path to course root directory. Not recommended as it is
+      //                   not portable to other users if checked-in.
+      //   locationProperty
+      //              - name of a property that indicates course location. Do not
+      //                  use ${...} (this is not an Ant file). Just specify the Ant
+      //                  property name.  Define the property in build.properties in 
+      //                  your home directory.  Takes precedence over location if both
+      //                  are specified.
+   <course name="cs" locationProperty="core.spring.path"/>
+      -->
+    <course name="bd" locationProperty="big.data.path" />
+    <course name="ha" locationProperty="hawq.architecture.path" />
+    <course name="sxd" locationProperty="spring.xd.path" />
+
+    <!-- As an example, here is the XML from Spring Web. Customise for your course. -->
+    
+    <!--
+      // A cover.pdf and copyright.pdf will automatically be added to the front
+      // before this section. These are from the docs/covers directory by default.
+      -->
+    
+    <section name="BigData" first="01">
+        <module course="bd" lab="no" labdocs="hadoop-overview" >HadoopOverview.ppt</module>
+        <module course="bd" lab="no" labdocs="pivotal-hd-overview" >PivotalHDArchitecture.ppt</module>
+        <module course="bd" lab="GettingStartediWithHdfs" labdocs="getting-started-with-hdfs" >GettingStartedWithHDFS.ppt</module>        
+    </section>
+
+    <!-- Section names and numbering are just for documentation. -->
+    <section name="SpringXD" first="04">
+        <module course="sxd" lab="no">01-Introduction.odp</module>
+        <module course="sxd" lab="no">03-Architecture.odp</module>
+        <module course="sxd" lab="introduction-to-streams">04-IntroductionToStreams.odp</module>
+        <module course="sxd" lab="advanced-streams">06-AdvancedStreams.odp</module>
+        <module course="sxd" lab="introduction-to-jobs">07-IntroductionToJobs.odp</module>
+        <module course="sxd" lab="advanced-jobs">09-AdvancedJobs.odp</module>
+    </section>
+    
+    <section name="HAWQ-Architecture" first="10">
+        <module course="ha" lab="none" >01-HAWQ_Architecture.ppt</module>
+        <module course="ha" labdocs="getting-started">02-Getting_Started.ppt</module>
+        <module course="ha" labdocs="creating-tables">04-Working_with_Databases_Schemas_Tables.ppt</module>
+        <module course="ha" labdocs="data-load">06-Loading_data.ppt</module>
+        <module course="ha" labdocs="pivotal-extension-framework">07-PXF.ppt</module>
+        <module course="ha" lab="none">08-Query_Processing.ppt</module>
+        <module course="ha" labdocs="distributing-data">09-Distributing_Data.ppt</module>
+        <module course="ha" labdocs="partitioning">10-Table_Partitioning.ppt</module>
+        <module course="ha" labdocs="explain-analyze">11-Analyzing_Query_Plans.ppt</module>
+        
+    </section>
+</modules>

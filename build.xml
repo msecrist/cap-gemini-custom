@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  //
+  // Master Build File for Course.
+  //
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --> 
+
+<!-- Performs all tasks to build and package this course. -->
+<project name="Cap Gemini Custom" default="help" basedir=".">
+
+    <!-- Root directory of this course (and this Ant project). Everything else
+           is relative. -->
+    <property name="project.root.dir" value="."/>
+
+    <!-- User home not set correctly when running on a Windows VM -->
+    <property environment="env"/>
+
+    <condition property="user.home.dir" value="${env.HOMEDRIVE}${env.HOMEPATH}">
+        <os family="windows" />
+    </condition>
+
+    <condition property="user.home.dir" value="${user.home}">
+        <not><os family="windows"/></not>
+    </condition>
+
+    <!-- Developer specific properties. -->
+    <property file="${user.home.dir}/build.properties"/>
+
+    <!-- Course specific properties. -->
+    <property file="${project.root.dir}/build.properties"/>
+
+    <!-- Simply import and use main build file -->
+    <import file="${course.build.dir}/build.xml"/>
+    
+    <!-- Location of labs fr each course -->
+    <property name="lab.base.dir" value="${project.root.dir}/lab"/>
+    <property name="bd.base.dir"  value="${big.data.path}/lab/parentProject"/>
+    <property name="hq.base.dir" value="${hawq.architecture.path}/lab"/>
+    <property name="sxd.base.dir" value="${spring.xd.path}/lab"/>
+    
+    <!-- Copy labs from the courses into lab/parentProject -->
+    <!--    Run "ant copy-remote-labs install-labs" -->
+    <target name="copy-remote-labs">
+        <!-- Make sure labs parent directory exists -->
+        <mkdir dir="${lab.dir}"/>
+        
+        <!-- Copy the pom.xml -->
+        <echo message="Copying: ${lab.base.dir}/pom.xml"/>
+        <copy toDir="${lab.dir}" file="${lab.base.dir}/pom.xml"/>
+        
+        <!-- Could explicitly copy any custom labs from ${lab.base.dir} here -->
+        
+        <!-- Copy the Big Data labs  -->
+        <echo message="Copying labs in ${bd.base.dir}"/>
+        <copy toDir="${lab.dir}">
+            <fileset dir="${bd.base.dir}"/>
+        </copy>
+        
+        <!-- Copy the HAWQ labs  -->
+        <echo message="Copying labs in ${hq.base.dir}"/>
+        <copy toDir="${lab.dir}">
+            <fileset dir="${hq.base.dir}"/>
+        </copy>
+        
+        <!-- Copy the Spring XD labs -->
+        <echo message="Copying labs in ${sxd.base.dir}"/>
+        <copy toDir="${lab.dir}">
+            <fileset dir="${sxd.base.dir}"/>
+        </copy>
+    </target>
+    
+    <!-- This is supposed to copy remote labs -->
+    <target name="setup-custom-labs">
+        <pathconvert pathsep="${line.separator}"
+            property="echo.classpath" refid="run.classpath"/>
+        <echo message="Classpath: ${echo.classpath}"/>
+        
+        <!-- Make sure labs parent directory exists -->
+        <mkdir dir="${lab.dir}"/>
+        
+        <!-- Copy the pom.xml -->
+        <echo message="Copying: ${lab.base.dir}/pom.xml"/>
+        <copy toDir="${lab.dir}" file="${lab.base.dir}/pom.xml"/>
+        
+        
+        <!-- Copy all the remote labs -->
+        <pomModulesUpdater dir="${lab.dir}" copyRemoteLabs="true"
+            loggerLevel="INFO" modules="${modules.xml.path}"/>
+        
+        <property name="pom.updated" value="true"/>
+    </target>
+    
+    <!--
+      // Each course has its own group ids, versions and rewards setup.  Need to
+      // unify these dependencies.  This setup has to be hard-coded for every
+      // custom course.
+      -->
+    <target name="modify-pom-dependencies">
+        <!--
+          // Task properties:
+          //   labDir          = directory containing all the labs
+          //   pomFile         = path to master POM
+          //   artifactId      = POM artifact id. Default: parentProject
+          //   groupId         = POM group id. Default: org.springsource.training.module
+          //   versionNumber   = course release version: such as 4.1.a-RELEASE 
+          //   test            = set test mode? List the files it would change, but
+          //                     doesn't actually change any of them
+          //   addDeps         = add specified dependencies to child POMs
+          //   deleteDeps      = remove specified dependencies to child POMs
+          //   includeProjects = projects to include when adding or removing deps from
+          //                        child POMs.  Other actions still occur.
+          //   excludeProjects = projects to ignore when adding or removing deps from
+          //                        child POMs.  Other actions still occur.
+          // Only one of labDir or pomFile is normally required.
+          // Only one of includeProjects or excludeProjects is valid, No wildcards.
+          // Modifies the pom.xml, copies original to pom.xml.bak
+         -->
+        
+        <!-- Performs several actions:
+          //  1. Make sure all lab projects have same group id.
+          //  2. Set artifact-id of parent POM, make sure child POMs use it.
+          //  3. Set version number of parent POM, make sure child POMs use it.
+          -->
+        <pomPropertiesUpdater labDir="${lab.dir}"
+            artifactId="${pom.artifact.id}" groupId="${pom.group.id}"
+            versionNumber="${release}"
+            loggerLevel="${pomPropertiesUpdater.logger}"/>
+        
+        <!-- Can use these to modify conflicting versions when merging multiple 
+              parent poms - not needed here -->
+        
+        <!--
+          // Make spring-enterprise projects use rewards-mini (see note at top
+          // of this file). 
+          
+        <pomDependenciesUpdater labDir="${lab.dir}"
+                loggerLevel="${pomDependenciesUpdater.logger}"
+                addDeps="com.springsource.training.module:rewards-mini"
+                deleteDeps="com.springsource.training.module:rewards"
+                includeProjects="tasks,tasks-solution,batch-intro,batch-intro-solution"/>
+-->
+        
+        <!-- Spring Web needs servlet 3 which changed the artifactId from servlet-api
+             to javax.servlet-api.  Upgrading the rest-ws projects accordingy.
+        <pomDependenciesUpdater labDir="${lab.dir}"
+                loggerLevel="${pomDependenciesUpdater.logger}"
+                addDeps="javax.servlet:javax.servlet-api"
+                deleteDeps="javax.servlet:servlet-api"
+                includeProjects="ws,ws-solution,rest-ws,rest-ws-solution"/>
+                 -->
+    </target>
+</project>
