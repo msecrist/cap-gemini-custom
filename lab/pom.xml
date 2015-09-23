@@ -262,20 +262,20 @@
           // DO NOT MODIFY THESE MODULE ELEMENTS - GENERATED AUTOMATICALLY
           -->
         <!-- Section: BigData -->
-        <module>../../../Big-Data-With-Hadoop-PivotalHD/lab/parentProject/GettingStartedWithHdfs</module>
-        <module>../../../Big-Data-With-Hadoop-PivotalHD/lab/parentProject/GettingStartedWithHdfs-solution</module>
+        <module>GettingStartedWithHdfs</module>
+        <module>GettingStartedWithHdfs-solution</module>
         <!-- Section: SpringXD -->
-        <module>../../../Spring-XD/lab/introduction-to-streams</module>
-        <module>../../../Spring-XD/lab/advanced-streams</module>
-        <module>../../../Spring-XD/lab/introduction-to-jobs</module>
-        <module>../../../Spring-XD/lab/advanced-jobs</module>
+        <module>introduction-to-streams</module>
+        <module>advanced-streams</module>
+        <module>introduction-to-jobs</module>
+        <module>advanced-jobs</module>
         <!-- Section: HAWQ-Architecture -->
-        <module>../../../HAWQ-DBA/lab/01-Getting-Started</module>
-        <module>../../../HAWQ-DBA/lab/03-Creating-Tables</module>
-        <module>../../../HAWQ-DBA/lab/05-Data-Load</module>
-        <module>../../../HAWQ-DBA/lab/07-PXF</module>
-        <module>../../../HAWQ-DBA/lab/08-Distributing-Data</module>
-        <module>../../../HAWQ-DBA/lab/09-Partitioning</module>
-        <module>../../../HAWQ-DBA/lab/analyzing_query_plans</module>
+        <module>hawq-getting-started</module>
+        <module>hawq-creating-tables</module>
+        <module>hawq-loading-data</module>
+        <module>hawq-pxf</module>
+        <module>hawq-distributing-data</module>
+        <module>hawq-partitioning</module>
+        <module>analyzing_query_plans</module>
     </modules>
 </project>
